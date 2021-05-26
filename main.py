@@ -1,6 +1,13 @@
 from typing import Tuple
 import numpy as np
+from copy import deepcopy
 
+"""
+    Class that performs qr decomposition. Use methods:
+    perform_householder_QR,
+    perform_givens_QR
+    both accept np.nadarry that fulfils m >= n condtion is 2d, and contains real numbers.
+"""
 class QR:
     def __init__(self) -> None:
         pass
@@ -65,21 +72,6 @@ class QR:
 
         return Q[:n].T, np.triu(R[:n])
 
-    def __givens_rotation(self, a: np.ndarray, b: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-        if b == 0:
-            c = 1
-            s = 0
-        else:
-            if np.abs(b) > np.abs(a):
-                r = a / b
-                s = 1 / np.sqrt(1 + r**2)
-                c = s * r
-            else:
-                r = b / a
-                c = 1 / np.sqrt(1 + r**2)
-                s = c * r
-        return c,s
-
     def __givens_qr(self, matrix: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         m, n = matrix.shape
         R = matrix
@@ -92,7 +84,7 @@ class QR:
                 R[i-1:i+1, j] = G @ R[i-1:i+1, j]
                 Q[i-1:i+1, :] = G @ Q[i-1:i+1, :]
 
-        return Q, R
+        return Q.T, R
 
     """
     Method that performs Givens Rotation QR, acceptcs 2D, real numbers matrix, that
@@ -115,17 +107,20 @@ if __name__ == "__main__":
     matrix = np.matrix('1 2 4; 5 6 7; 8 9 10')
     matrix = np.asarray(matrix)
     print(matrix)
-    Q, R = qr.perform_householder_QR(matrix)
+    a = deepcopy(matrix)
+    b = deepcopy(matrix)
+    c = deepcopy(matrix)
+    Q, R = qr.perform_householder_QR(a)
     print("Householder:")
     print(Q)
     print(R)
     print("Givens")
-    Q, R = qr.perform_givens_QR(matrix)
+    Q, R = qr.perform_givens_QR(b)
     print(Q)
     print(R)
     # dla porównania
     print("Numpy")
-    Q, R = np.linalg.qr(matrix)
+    Q, R = np.linalg.qr(c)
     print(Q)
     print(R)
 
