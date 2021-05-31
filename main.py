@@ -108,18 +108,22 @@ class QR:
             print("Incorrect type.")
             raise Exception
 
-    def solve_least_squares(self, A: np.ndarray, b: np.array):
-        Q, R = self.perform_householder_QR(A)
+    def solve_least_squares(self, A: np.ndarray, b: np.array, is_givens):
+        if is_givens:
+            Q, R = self.perform_givens_QR(A)
+        else:
+            Q, R = self.perform_householder_QR(A)
         x = solve(R, np.dot(Q.T, b))
         return x
 
     def __design_matrix(self, A: np.ndarray):
         return np.hstack((np.ones(A.shape[0]).reshape(-1, 1), A[:, :-1]))
 
-    def fit_poly(self, A: np.ndarray):
+    def fit_poly(self, A: np.ndarray, is_givens: bool):
         return self.solve_least_squares(
             np.dot(self.__design_matrix(A), self.__design_matrix(A).T),
-            A[:, -1:].reshape(-1, 1))
+            A[:, -1:].reshape(-1, 1),
+            is_givens=is_givens)
 
 
 """
@@ -147,10 +151,7 @@ if __name__ == "__main__":
     print(Q)
     print(R)
     print('solve least squares')
-    b_v = np.asarray([1, 1, ])
-    print(matrix)
-    print(b_v)
-
+    print(qr.solve_least_squares(matrix[:2, :-1], matrix[:2, -1:], is_givens=True))
 
     def PolyCoefficients(x, coeffs):
         """ Returns a polynomial for ``x`` values for the ``coeffs`` provided.
@@ -164,21 +165,17 @@ if __name__ == "__main__":
 
 
     def f(a, b):
-        return a + 2 * b
+        return a + 2 * b ^ 2
 
 
-    x1 = np.asarray(range(0, 6))
-    x2 = np.asarray(range(0, 6))
+    x1 = np.asarray(range(0, 4))
+    x2 = np.asarray(range(0, 4))
     y = f(x1, x2)
     mat = np.asmatrix([x1, x2, y])
 
     plt3d = plt.figure().gca(projection='3d')
     xx, yy = np.meshgrid(range(10), range(10))
     plt3d.plot_surface(xx, yy, f(xx, yy), alpha=0.2)
-    print(mat.T)
-    print(matrix)
-    print(matrix.shape, mat.T.shape)
-    # plt3d.plot_surface(xx, yy, PolyCoefficients(xx, qr.fit_poly(matrix)), alpha=0.2)
-    plt3d.plot_surface(xx, yy, PolyCoefficients(xx, qr.fit_poly(mat.T)), alpha=0.2)
+    plt3d.plot_surface(xx, yy, PolyCoefficients(xx, qr.fit_poly(mat.T, is_givens=True)), alpha=0.2)
 
     plt.show()
