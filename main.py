@@ -173,7 +173,7 @@ if __name__ == "__main__":
     x1 = np.asarray(range(0, 4))
     x2 = np.asarray(range(0, 4))
     y = f(x1, x2)
-    mat = np.asmatrix([x1, x2, y])
+    mat = np.asarray([x1, x2, y])
 
     plt3d = plt.figure().gca(projection='3d')
     xx, yy = np.meshgrid(range(10), range(10))
