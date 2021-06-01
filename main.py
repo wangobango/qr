@@ -151,6 +151,8 @@ if __name__ == "__main__":
     print(Q)
     print(R)
     print('solve least squares')
+    print(matrix[:2, :-1])
+    print(matrix[:2, -1:])
     print(qr.solve_least_squares(matrix[:2, :-1], matrix[:2, -1:], is_givens=True))
 
     def PolyCoefficients(x, coeffs):
