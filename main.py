@@ -155,29 +155,29 @@ if __name__ == "__main__":
     print(matrix[:2, -1:])
     print(qr.solve_least_squares(matrix[:2, :-1], matrix[:2, -1:], is_givens=True))
 
-    def PolyCoefficients(x, coeffs):
+    def PolyCoefficients(x1,x2, coeffs):
         """ Returns a polynomial for ``x`` values for the ``coeffs`` provided.
         The coefficients must be in ascending order (``x**0`` to ``x**o``).
         """
         o = len(coeffs)
         y = 0
         for i in range(o):
-            y += coeffs[i] * x ** i
+            y += coeffs[i] * x1 ** i + coeffs[i] * x2 ** i
         return y
 
 
     def f(a, b):
-        return a + 2 * b ^ 2
+        return a + 2 * (b ** 2)
 
 
-    x1 = np.asarray(range(0, 4))
-    x2 = np.asarray(range(0, 4))
+    x1 = np.asarray(np.random.randint(0,10,5))
+    x2 = np.asarray(np.random.randint(0,10,5))
     y = f(x1, x2)
     mat = np.asarray([x1, x2, y])
-
     plt3d = plt.figure().gca(projection='3d')
+    #xx,yy = np.meshgrid(np.linspace(0,10,11),np.linspace(0,10,11))
     xx, yy = np.meshgrid(range(10), range(10))
     plt3d.plot_surface(xx, yy, f(xx, yy), alpha=0.2)
-    plt3d.plot_surface(xx, yy, PolyCoefficients(xx, qr.fit_poly(mat.T, is_givens=True)), alpha=0.2)
-
+    plt3d.plot_surface(xx, yy, PolyCoefficients(xx,yy, qr.fit_poly(mat.T, is_givens=True)), alpha=0.2)
     plt.show()
+    print(qr.fit_poly(mat.T, is_givens=True))
