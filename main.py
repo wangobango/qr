@@ -181,3 +181,5 @@ if __name__ == "__main__":
     plt3d.plot_surface(xx, yy, PolyCoefficients(xx,yy, qr.fit_poly(mat.T, is_givens=True)), alpha=0.2)
     plt.show()
     print(qr.fit_poly(mat.T, is_givens=True))
+
+    print( qr.fit_poly(mat.T, is_givens=True))
